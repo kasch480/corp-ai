@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Corporate AI Platform — Prototyp
 
-## Getting Started
+Ein KI-Workspace für Unternehmen (Multi-Tenant), ähnlich Dify.ai. Firmen registrieren
+sich, bekommen einen eigenen Bereich und chatten mit Claude. Aufbau: Next.js 16 +
+Supabase (Auth/DB) + Anthropic Claude.
 
-First, run the development server:
+## Setup (einmalig)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 1. Supabase-Projekt anlegen (kostenlos)
+1. Auf [supabase.com](https://supabase.com) registrieren → **New project**.
+2. Wenn das Projekt bereit ist: **SQL Editor** → **New query** → den Inhalt von
+   `supabase/schema.sql` einfügen → **Run**. Das legt Tabellen + Sicherheits-Policies an.
+3. **Authentication → Providers → Email**: „Confirm email" **ausschalten**
+   (für den Prototyp, damit Login sofort funktioniert).
+4. **Project Settings → API**: `Project URL` und `anon public` Key kopieren.
+
+### 2. Anthropic API-Key
+Auf [console.anthropic.com](https://console.anthropic.com) → **API Keys** → Key erstellen.
+
+### 3. `.env.local` anlegen
+`.env.local.example` nach `.env.local` kopieren und die drei Werte eintragen:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://dein-projekt.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=dein-anon-key
+ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Starten
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+→ [http://localhost:3000](http://localhost:3000) öffnen, Firma registrieren, chatten.
 
-## Learn More
+## Was drin ist
+- **Login / Registrierung** mit automatischer Workspace-Anlage pro Firma
+- **Dashboard** mit Sidebar (Chat, Inbox, Bibliothek, Spaces, Agenten, Wissen, Atelier)
+- **Chat mit Claude**, Antworten live gestreamt, Verlauf in der DB gespeichert
+- **Multi-Tenant**: jede Firma sieht nur ihre eigenen Daten (Row Level Security)
 
-To learn more about Next.js, take a look at the following resources:
+## Noch nicht drin (nächste Schritte)
+Dokumenten-Upload + RAG (Wissensbasis), Agenten-Builder, Team-Einladungen, Billing.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tech
+Next.js 16 (App Router), React 19, TypeScript, Tailwind v4, Supabase, Anthropic SDK.
+Modell: `claude-sonnet-4-6` (in `lib/claude.ts` änderbar).
