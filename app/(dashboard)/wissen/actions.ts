@@ -18,8 +18,9 @@ function chunkText(text: string, size = 800, overlap = 100): string[] {
 async function extractText(buffer: ArrayBuffer, filename: string): Promise<string> {
   const isPdf = filename.toLowerCase().endsWith(".pdf");
   if (isPdf) {
-    const pdfParse = (await import("pdf-parse")).default;
-    const data = await pdfParse(Buffer.from(buffer));
+    const pdfParse = await import("pdf-parse");
+    const parse = (pdfParse as unknown as { default: typeof pdfParse }).default ?? pdfParse;
+    const data = await parse(Buffer.from(buffer));
     return data.text;
   }
   return new TextDecoder().decode(buffer);
